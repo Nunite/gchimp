@@ -116,6 +116,18 @@ pub enum TextKey {
     // BLBH 相关的提示文本键
     ConvertSMDHint,
     CompileMDLHint,
+    // Misc 相关的提示文本键
+    SplitModelTitle,
+    SplitModelHint,
+    LoopWaveTitle,
+    LoopWaveHint,
+    LoopCheckboxHint,
+    ResMakeTitle,
+    ResMakeHint,
+    WadCheckHint,
+    DefaultResHint,
+    IgnoreMissingHint,
+    CreateLinkedWadHint,
 }
 
 lazy_static! {
@@ -221,6 +233,17 @@ lazy_static! {
         en.insert(TextKey::GoldSrcCompileHint, "Compile model for GoldSrc engine");
         en.insert(TextKey::ConvertSMDHint, "Creates new SMD file that will use those new texture files accordingly");
         en.insert(TextKey::CompileMDLHint, "Creates QC file and compiles the model with included studiomdl.exe");
+        en.insert(TextKey::SplitModelTitle, "Split Model Title");
+        en.insert(TextKey::SplitModelHint, "Split Model Hint");
+        en.insert(TextKey::LoopWaveTitle, "Loop Wave Title");
+        en.insert(TextKey::LoopWaveHint, "Loop Wave Hint");
+        en.insert(TextKey::LoopCheckboxHint, "Loop Checkbox Hint");
+        en.insert(TextKey::ResMakeTitle, "ResMake Title");
+        en.insert(TextKey::ResMakeHint, "ResMake Hint");
+        en.insert(TextKey::WadCheckHint, "Wad Check Hint");
+        en.insert(TextKey::DefaultResHint, "Default Res Hint");
+        en.insert(TextKey::IgnoreMissingHint, "Ignore Missing Hint");
+        en.insert(TextKey::CreateLinkedWadHint, "Create Linked Wad Hint");
         m.insert(Language::English, en);
 
         // Chinese translations
@@ -322,6 +345,17 @@ lazy_static! {
         zh.insert(TextKey::GoldSrcCompileHint, "为GoldSrc引擎编译模型");
         zh.insert(TextKey::ConvertSMDHint, "创建新的SMD文件，使用相应的新纹理文件");
         zh.insert(TextKey::CompileMDLHint, "创建QC文件并使用包含的studiomdl.exe编译模型");
+        zh.insert(TextKey::SplitModelTitle, "分割模型标题");
+        zh.insert(TextKey::SplitModelHint, "分割模型提示");
+        zh.insert(TextKey::LoopWaveTitle, "循环波形标题");
+        zh.insert(TextKey::LoopWaveHint, "循环波形提示");
+        zh.insert(TextKey::LoopCheckboxHint, "循环复选框提示");
+        zh.insert(TextKey::ResMakeTitle, "ResMake标题");
+        zh.insert(TextKey::ResMakeHint, "ResMake提示");
+        zh.insert(TextKey::WadCheckHint, "Wad检查提示");
+        zh.insert(TextKey::DefaultResHint, "默认Res提示");
+        zh.insert(TextKey::IgnoreMissingHint, "忽略缺失提示");
+        zh.insert(TextKey::CreateLinkedWadHint, "创建链接Wad提示");
         m.insert(Language::Chinese, zh);
 
         m
