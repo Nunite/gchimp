@@ -53,6 +53,7 @@ pub fn gui() -> eyre::Result<()> {
             .with_icon(icon)
             .with_maximize_button(false)
             .with_minimize_button(false),
+        centered: true, // 使用 NativeOptions 的 centered 字段
         ..Default::default()
     };
 
