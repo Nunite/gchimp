@@ -1,5 +1,7 @@
 # gchimp
 
+[中文](./README_ZH.md)
+
 A collection of various GoldSrc mapping tools with both graphical and command line interface
 
 **You can check gchimp-web, a mini version of native application at your convenience, here [http://gchimp.romanian-jumpers.com/](http://gchimp.romanian-jumpers.com/)**
@@ -37,19 +39,3 @@ Usually it would just work out of the box. If there is any problem, try starting
 ## Building
 
 To build native egui application, do
-
-```sh
-cargo build --package gchimp-native
-```
-
-To run native egui application, do
-
-```sh
-cargo run --release --package gchimp-native
-```
-
-## Deploying to the web
-
-You can deploy gchimp to the web. The features are limited at the moment
-
-Refer to [GCHIMP-WEB-README.md](./gchimp-web/www/README.md)
