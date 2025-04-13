@@ -39,3 +39,13 @@ Usually it would just work out of the box. If there is any problem, try starting
 ## Building
 
 To build native egui application, do
+
+```sh
+cargo build --package gchimp-native
+```
+
+To run native egui application, do
+
+```sh
+cargo run --release --package gchimp-native
+```

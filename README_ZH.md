@@ -36,4 +36,14 @@
 
 ## 构建
 
-要构建原生egui应用程序，请执行:
+要构建原生 egui 应用程序，请执行
+
+```sh
+cargo build --package gchimp-native
+```
+
+要运行本机 egui 应用程序，请执行
+
+```sh
+cargo run --release --package gchimp-native
+```
