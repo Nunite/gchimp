@@ -17,6 +17,7 @@ use crate::{
         TabProgram,
     },
     persistent_storage::PersistentStorage,
+    i18n::{Language, TextKey, get_text},
 };
 
 pub struct WaddyGui {
@@ -25,6 +26,7 @@ pub struct WaddyGui {
     /// 32x32 texture on 512x512 grid is VERY TINY
     fit_texture: bool,
     persistent_storage: Arc<Mutex<PersistentStorage>>,
+    current_language: Language,
 }
 
 struct WaddyInstance {
@@ -106,6 +108,7 @@ impl WaddyGui {
             extra_image_viewports: vec![],
             fit_texture: true,
             persistent_storage,
+            current_language: Language::Chinese, // 默认使用中文
         }
     }
 
@@ -986,15 +989,13 @@ impl WaddyGui {
         let mut should_close = false;
 
         ui.menu_button("Menu", |ui| {
-            if ui.button("New").clicked() {
+            if ui.button(get_text(TextKey::MenuNew, self.current_language)).clicked() {
                 let _ = self.start_waddy_instance(ui, None);
-
                 ui.close_menu();
             }
 
-            if ui.button("Open").clicked() {
+            if ui.button(get_text(TextKey::MenuOpen, self.current_language)).clicked() {
                 should_close = self.menu_open(ui);
-
                 ui.close_menu();
             }
 
@@ -1002,21 +1003,19 @@ impl WaddyGui {
 
             ui.separator();
 
-            if ui.button("Save (Ctrl+S)").clicked() {
+            if ui.button(get_text(TextKey::MenuSave, self.current_language)).clicked() {
                 self.menu_save(instance_index);
-
                 ui.close_menu();
             }
 
-            if ui.button("Save As").clicked() {
+            if ui.button(get_text(TextKey::MenuSaveAs, self.current_language)).clicked() {
                 self.menu_save_as_dialogue(instance_index);
-
                 ui.close_menu();
             }
 
             ui.separator();
 
-            if ui.button("Find (Ctrl+F)").clicked() {
+            if ui.button(get_text(TextKey::MenuFind, self.current_language)).clicked() {
                 if self.instances[instance_index].search.enable {
                     self.instances[instance_index].search.enable = false;
                 } else {
@@ -1030,9 +1029,7 @@ impl WaddyGui {
 
             ui.separator();
 
-            if ui.button("Import").clicked() {
-                // TODO this is not consistent with drag and drop behavior
-                // this does not filter out file extension
+            if ui.button(get_text(TextKey::MenuImport, self.current_language)).clicked() {
                 if let Some(paths) = rfd::FileDialog::new()
                     .add_filter("Image", IMAGE_FORMATS)
                     .pick_files()
@@ -1052,9 +1049,8 @@ impl WaddyGui {
                 ui.close_menu();
             }
 
-            if ui.button("Export All").clicked() {
+            if ui.button(get_text(TextKey::MenuExportAll, self.current_language)).clicked() {
                 if let Some(path) = rfd::FileDialog::new().pick_folder() {
-                    // TODO TOAST TOAST
                     if let Err(err) = self.instances[instance_index]
                         .waddy
                         .dump_textures_to_files(path)
@@ -1068,12 +1064,26 @@ impl WaddyGui {
 
             ui.separator();
 
-            ui.menu_button("Options", |ui| {
-                if ui.checkbox(&mut self.fit_texture, "Fit texture").clicked() {
+            ui.menu_button(get_text(TextKey::MenuOptions, self.current_language), |ui| {
+                if ui.checkbox(&mut self.fit_texture, get_text(TextKey::FitTexture, self.current_language)).clicked() {
                     ui.close_menu();
                 }
 
-                if ui.button("To UPPERCASE").clicked() {
+                ui.separator();
+
+                // 添加语言选择
+                ui.menu_button("Language/语言", |ui| {
+                    if ui.radio_value(&mut self.current_language, Language::English, "English").clicked() {
+                        ui.close_menu();
+                    }
+                    if ui.radio_value(&mut self.current_language, Language::Chinese, "中文").clicked() {
+                        ui.close_menu();
+                    }
+                });
+
+                ui.separator();
+
+                if ui.button(get_text(TextKey::ToUppercase, self.current_language)).clicked() {
                     (0..self.instances[instance_index].texture_tiles.len()).for_each(|tile_idx| {
                         let tile_name =
                             self.instances[instance_index].texture_tiles[tile_idx].name_mut();
@@ -1090,7 +1100,7 @@ impl WaddyGui {
                     });
                 }
 
-                if ui.button("To lowercase").clicked() {
+                if ui.button(get_text(TextKey::ToLowercase, self.current_language)).clicked() {
                     (0..self.instances[instance_index].texture_tiles.len()).for_each(|tile_idx| {
                         let tile_name =
                             self.instances[instance_index].texture_tiles[tile_idx].name_mut();
@@ -1110,11 +1120,9 @@ impl WaddyGui {
 
             ui.separator();
 
-            if ui.button("Close").clicked() {
+            if ui.button(get_text(TextKey::MenuClose, self.current_language)).clicked() {
                 self.instances.remove(instance_index);
-
                 should_close = true;
-
                 ui.close_menu();
             }
         });
@@ -1185,15 +1193,13 @@ impl WaddyGui {
     fn empy_instance_ui(&mut self, ui: &mut egui::Ui) {
         ui.separator();
         ui.menu_button("Menu", |ui| {
-            if ui.button("New").clicked() {
+            if ui.button(get_text(TextKey::MenuNew, self.current_language)).clicked() {
                 let _ = self.start_waddy_instance(ui, None);
-
                 ui.close_menu();
             }
 
-            if ui.button("Open").clicked() {
+            if ui.button(get_text(TextKey::MenuOpen, self.current_language)).clicked() {
                 self.menu_open(ui);
-
                 ui.close_menu();
             }
 
@@ -1201,7 +1207,7 @@ impl WaddyGui {
         });
 
         ui.separator();
-        ui.label("Drag and drop a WAD file to start.\nYou can also drop a BSP file if you want.");
+        ui.label(get_text(TextKey::DragDropHint, self.current_language));
 
         let ctx = ui.ctx();
 
@@ -1229,14 +1235,13 @@ impl WaddyGui {
     }
 
     fn open_recent_menu_button(&mut self, ui: &mut egui::Ui) {
-        ui.menu_button("Open Recent", |ui| {
+        ui.menu_button(get_text(TextKey::MenuOpenRecent, self.current_language), |ui| {
             let mutex = self.persistent_storage.clone();
             let persistent_storage = mutex.lock().unwrap();
             let recent_wads = persistent_storage.get_waddy_recent_wads();
 
             let to_remove = if recent_wads.is_none() || recent_wads.unwrap().is_empty() {
-                ui.add_enabled(false, egui::Button::new("No recently opened"));
-
+                ui.add_enabled(false, egui::Button::new(get_text(TextKey::NoRecentFiles, self.current_language)));
                 None
             } else {
                 let recent_wads = recent_wads.unwrap().to_owned();

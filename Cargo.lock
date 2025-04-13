@@ -1744,6 +1744,7 @@ dependencies = [
  "eyre",
  "gchimp",
  "image",
+ "lazy_static",
  "map",
  "qc",
  "rayon",

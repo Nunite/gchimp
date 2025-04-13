@@ -1,4 +1,5 @@
 use std::path::{Path, PathBuf};
+use std::env;
 
 use eframe::egui::{
     self, Align2, Color32, ColorImage, Context, Id, LayerId, Order, TextStyle, TextureHandle,
@@ -165,4 +166,30 @@ pub fn load_egui_image_to_texture(
         .load_texture(path.to_str().unwrap(), color_image, Default::default());
 
     Ok(handle)
+}
+
+
+pub fn load_chinese_font(ctx: &egui::Context) -> Result<(), Box<dyn std::error::Error>> {
+    
+    let font_data = include_bytes!("assets/fonts/SourceHanSansCN-Normal.otf");
+
+    // 创建字体定义
+    let mut fonts = egui::FontDefinitions::default();
+    
+    // 添加中文字体
+    fonts.font_data.insert(
+        "WenQuanYi Micro Hei".to_owned(),
+        egui::FontData::from_static(font_data),
+    );
+
+    // 将中文字体添加到字体族中
+    fonts.families
+        .get_mut(&egui::FontFamily::Proportional)
+        .unwrap()
+        .insert(0, "WenQuanYi Micro Hei".to_owned());
+
+    // 设置字体
+    ctx.set_fonts(fonts);
+
+    Ok(())
 }

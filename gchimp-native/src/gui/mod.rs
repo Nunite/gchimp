@@ -77,6 +77,9 @@ pub fn gui() -> eyre::Result<()> {
         options,
         Box::new(|cc| {
             egui_extras::install_image_loaders(&cc.egui_ctx);
+            if let Err(err) = utils::load_chinese_font(&cc.egui_ctx) {
+                eprintln!("加载中文字体失败: {}", err);
+            }
             Ok(Box::new(MyApp::new(
                 config_res,
                 persistent_storage,
