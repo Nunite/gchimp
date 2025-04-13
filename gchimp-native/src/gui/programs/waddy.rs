@@ -109,6 +109,7 @@ impl WaddyGui {
             fit_texture: true,
             persistent_storage,
             current_language: Language::Chinese, // 默认使用中文
+            
         }
     }
 
