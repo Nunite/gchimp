@@ -13,6 +13,7 @@ use gchimp::modules::blender_lightmap_baker_helper::{
 use crate::{
     config::Config,
     gui::{constants::IMAGE_FORMATS, utils::preview_file_being_dropped, TabProgram},
+    i18n::{Language, TextKey, get_text},
 };
 
 #[derive(Debug)]
@@ -25,6 +26,7 @@ pub struct BLBHGui {
     check_clamp_value: bool,
     // origin: String,
     status: Arc<Mutex<String>>,
+    current_language: Language,
 }
 
 impl BLBHGui {
@@ -38,6 +40,7 @@ impl BLBHGui {
             check_clamp_value: false,
             // origin: "0 0 0".to_string(),
             status: Arc::new(Mutex::new("Idle".to_string())),
+            current_language: Language::Chinese,
         }
     }
 
@@ -107,11 +110,11 @@ impl TabProgram for BLBHGui {
         egui::Grid::new("Input smd and texture grid")
             .num_columns(2)
             .show(ui, |ui| {
-                ui.label("SMD:");
+                ui.label(get_text(TextKey::SMD, self.current_language));
                 ui.add(
                     egui::TextEdit::singleline(&mut self.smd_path).hint_text("Choose .smd file"),
                 );
-                if ui.button("Add").clicked() {
+                if ui.button(get_text(TextKey::Add, self.current_language)).clicked() {
                     if let Some(path) = rfd::FileDialog::new()
                         .add_filter("SMD", &["smd"])
                         .pick_file()
@@ -123,12 +126,12 @@ impl TabProgram for BLBHGui {
                 }
                 ui.end_row();
 
-                ui.label("Texture:");
+                ui.label(get_text(TextKey::Texture, self.current_language));
                 ui.add(
                     egui::TextEdit::singleline(&mut self.texture_path)
                         .hint_text("Choose an image file"),
                 );
-                if ui.button("Add").clicked() {
+                if ui.button(get_text(TextKey::Add, self.current_language)).clicked() {
                     if let Some(path) = rfd::FileDialog::new()
                         .add_filter("Image", IMAGE_FORMATS)
                         .pick_file()
@@ -140,20 +143,20 @@ impl TabProgram for BLBHGui {
             });
 
         ui.separator();
-        ui.label("Options:");
+        ui.label(get_text(TextKey::Options, self.current_language));
 
         ui.horizontal(|ui| {
-            ui.checkbox(&mut self.options.convert_texture, "Convert texture")
+            ui.checkbox(&mut self.options.convert_texture, get_text(TextKey::ConvertTexture, self.current_language))
                 .on_hover_text("Splits 4096x4096 texture into 64 smaller compliant files");
-            ui.checkbox(&mut self.options.convert_smd, "Convert SMD")
+            ui.checkbox(&mut self.options.convert_smd, get_text(TextKey::ConvertSMD, self.current_language))
                 .on_hover_text(
                     "Creates new SMD file that will use those new texture files accordingly",
                 );
-            ui.checkbox(&mut self.options.compile_model, "Compile MDL")
+            ui.checkbox(&mut self.options.compile_model, get_text(TextKey::CompileMDL, self.current_language))
                 .on_hover_text(
                     "Creates QC file and compiles the model with included studiomdl.exe",
                 );
-            ui.checkbox(&mut self.options.flat_shade, "Flat shade")
+            ui.checkbox(&mut self.options.flat_shade, get_text(TextKey::Flatshade, self.current_language))
                 .on_hover_text("Flags every texture with flat shade");
         });
 
@@ -197,7 +200,7 @@ By default, it will \"shrink\" the UV in by 1 pixel wherever applicable.",
 
         ui.separator();
 
-        if ui.button("Run").clicked() {
+        if ui.button(get_text(TextKey::Run, self.current_language)).clicked() {
             self.run();
         }
 
@@ -211,19 +214,19 @@ By default, it will \"shrink\" the UV in by 1 pixel wherever applicable.",
         // Collect dropped files:
         ctx.input(|i| {
             for item in i.raw.dropped_files.clone() {
-                if let Some(item) = item.path {
-                    if item.is_file() {
-                        if item.extension().is_some_and(|ext| ext == "smd") {
-                            self.smd_path = item.to_str().unwrap().to_string();
-                        } else {
-                            self.texture_path = item.to_str().unwrap().to_string();
+                if let Some(path) = item.path {
+                    if path.is_file() {
+                        if path.extension().is_some_and(|ext| ext == "smd") {
+                            self.smd_path = path.to_str().unwrap().to_string();
+                        } else if path.extension().is_some_and(|ext| ext == "wav") {
+                            self.texture_path = path.to_str().unwrap().to_string();
                         }
                     }
                 }
             }
         });
 
-        // Force continuous mode
+        // runs in continuous mode
         ctx.request_repaint();
 
         // Make it non drag-able

@@ -15,6 +15,7 @@ use crate::{
         utils::{load_egui_image_to_texture, preview_file_being_dropped},
         TabProgram,
     },
+    i18n::{Language, TextKey, get_text},
 };
 
 static FACE_SIZE: f32 = 94.;
@@ -30,6 +31,7 @@ pub struct SkyModGui {
     texture_per_face: String,
     idle: bool,
     program_output: Arc<Mutex<String>>,
+    current_language: Language,
 }
 
 impl SkyModGui {
@@ -43,6 +45,7 @@ impl SkyModGui {
             texture_per_face: String::from("1"),
             idle: true,
             program_output: Arc::new(Mutex::new(String::from("Idle"))),
+            current_language: Language::Chinese,
         }
     }
 
@@ -167,19 +170,16 @@ impl TabProgram for SkyModGui {
         "SkyMod".into()
     }
 
-    fn tab_ui(&mut self, ui: &mut eframe::egui::Ui) -> egui_tiles::UiResponse {
+    fn tab_ui(&mut self, ui: &mut egui::Ui) -> egui_tiles::UiResponse {
         ui.separator();
         ui.ctx().forget_all_images();
 
         egui::Grid::new("Texture grid")
             .num_columns(4)
-            // .min_col_width(0.)
-            // .min_row_height(0.)
-            // .max_col_width(0.)
             .spacing([1., 1.])
             .show(ui, |ui| {
                 ui.label("");
-                if ui.button("Reset").clicked() {
+                if ui.button(get_text(TextKey::Reset, self.current_language)).clicked() {
                     self.texture_paths.iter_mut().for_each(|tex| tex.clear());
                     (0..self.texture_handles.len())
                         .for_each(|idx| self.texture_handles[idx] = None);
@@ -200,12 +200,12 @@ impl TabProgram for SkyModGui {
             });
 
         ui.separator();
-        ui.label("Options:");
+        ui.label(get_text(TextKey::Options, self.current_language));
         ui.horizontal(|ui| {
             egui::Grid::new("option grid")
                 .num_columns(4)
                 .show(ui, |ui| {
-                    ui.label("Texture per face:");
+                    ui.label(get_text(TextKey::TexturePerFace, self.current_language));
                     ui.text_edit_singleline(&mut self.texture_per_face)
                         .on_hover_text(
                             "\
@@ -213,14 +213,14 @@ How many textures should each skybox face have? \n
 It should be a perfect square (such as 1, 4, 9, 16, ..) \n
 If a model has more than 64 textures, it will be split into smaller models",
                         );
-                    ui.label("Skybox size:");
+                    ui.label(get_text(TextKey::SkyboxSize, self.current_language));
                     ui.text_edit_singleline(&mut self.skybox_size)
                         .on_hover_text("The size of the model");
                 });
         });
 
         ui.horizontal(|ui| {
-            ui.checkbox(&mut self.options.convert_texture, "Convert texture")
+            ui.checkbox(&mut self.options.convert_texture, get_text(TextKey::ConvertTexture, self.current_language))
                 .on_hover_text(
                     "\
 Converts most image format into compliant BMP. \n
@@ -229,14 +229,14 @@ Recommended to leave it checked.
 ",
                 );
 
-            ui.checkbox(&mut self.options.flatshade, "Flat shade")
+            ui.checkbox(&mut self.options.flatshade, get_text(TextKey::Flatshade, self.current_language))
                 .on_hover_text(
                     "\
 Mark texture with flatshade flag. \n
 Recommeded to leave it checked for uniformly lit texture.",
                 );
 
-            ui.label("Output name: ");
+            ui.label(get_text(TextKey::OutputName, self.current_language));
             ui.text_edit_singleline(&mut self.options.output_name)
         });
 
@@ -245,15 +245,12 @@ Recommeded to leave it checked for uniformly lit texture.",
         ui.horizontal(|ui| {
             ui.horizontal(|ui| {
                 ui.add_enabled_ui(self.idle, |ui| {
-                    if ui.button("Run").clicked() {
-                        // TODO make it truly multithreaded like s2g
-                        // kindda lazy to do it tbh
-                        // it works ok enough and there isn't much on the output to report
+                    if ui.button(get_text(TextKey::Run, self.current_language)).clicked() {
                         self.run();
                     }
                 });
                 ui.add_enabled_ui(!self.idle, |ui| {
-                    if ui.button("Cancel").clicked() {
+                    if ui.button(get_text(TextKey::Cancel, self.current_language)).clicked() {
                         self.idle = true;
                     }
                 });

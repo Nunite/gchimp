@@ -8,13 +8,17 @@ use egui_extras::{Column, TableBuilder};
 
 use gchimp::modules::textile::{TexTileBuilder, TexTileOptions, TexTileSync};
 
-use crate::gui::{utils::preview_file_being_dropped, TabProgram};
+use crate::{
+    gui::{utils::preview_file_being_dropped, TabProgram},
+    i18n::{Language, TextKey, get_text},
+};
 
 pub struct TexTileGui {
     items: Vec<PathBuf>,
     options: TexTileOptions,
     extensions: String,
     sync: TexTileSync,
+    current_language: Language,
 }
 
 impl Default for TexTileGui {
@@ -27,6 +31,7 @@ impl Default for TexTileGui {
             options,
             extensions,
             sync: TexTileSync::default(),
+            current_language: Language::Chinese,
         }
     }
 }
@@ -94,12 +99,12 @@ impl TabProgram for TexTileGui {
         "TexTile".into()
     }
 
-    fn tab_ui(&mut self, ui: &mut eframe::egui::Ui) -> egui_tiles::UiResponse {
+    fn tab_ui(&mut self, ui: &mut egui::Ui) -> egui_tiles::UiResponse {
         ui.separator();
-        ui.label("Options:");
+        ui.label(get_text(TextKey::Options, self.current_language));
 
         ui.horizontal(|ui| {
-            ui.label("Image extensions");
+            ui.label(get_text(TextKey::ImageExtensions, self.current_language));
             ui.text_edit_singleline(&mut self.extensions).on_hover_text(
                 "\
 Converts only textures with specified file extension(s)
@@ -110,14 +115,14 @@ Space seperated",
         egui::Grid::new("TexTile option grid")
             .num_columns(6)
             .show(ui, |ui| {
-                ui.checkbox(&mut self.options.is_tiling, "Tiling");
+                ui.checkbox(&mut self.options.is_tiling, get_text(TextKey::Tiling, self.current_language));
                 ui.add_enabled(
                     self.options.is_tiling,
                     egui::DragValue::new(&mut self.options.tiling_scalar).range(0.0..=100.0),
                 )
                 .on_hover_text("The dimensions of a texture will multiply by this number.");
 
-                ui.checkbox(&mut self.options.is_transparent, "Transparent");
+                ui.checkbox(&mut self.options.is_transparent, get_text(TextKey::Transparent, self.current_language));
                 ui.add_enabled(
                     self.options.is_transparent,
                     egui::DragValue::new(&mut self.options.transparent_threshold)
@@ -131,7 +136,7 @@ If the dominant color of an image exceeds this threshold,
 it will be chosen as transparent mask.",
                 );
 
-                ui.checkbox(&mut self.options.change_name, "Change file name")
+                ui.checkbox(&mut self.options.change_name, get_text(TextKey::ChangeFileName, self.current_language))
                     .on_hover_text(
                         "\
 Prepend \"{\" if transparent
@@ -143,11 +148,11 @@ Append \"_<scalar>\" if tiling",
         ui.horizontal(|ui| {
             let is_done = *self.sync.done().lock().unwrap();
             ui.add_enabled_ui(is_done, |ui| {
-                if ui.button("Run").clicked() {
+                if ui.button(get_text(TextKey::Run, self.current_language)).clicked() {
                     self.run();
                 }
             });
-            ui.add_enabled_ui(!is_done, |ui| if ui.button("Cancel").clicked() {});
+            ui.add_enabled_ui(!is_done, |ui| if ui.button(get_text(TextKey::Cancel, self.current_language)).clicked() {});
 
             let readonly_buffer = self.sync.status().lock().unwrap();
             ui.text_edit_singleline(&mut readonly_buffer.as_str())
@@ -161,7 +166,7 @@ Append \"_<scalar>\" if tiling",
             .max(ui.spacing().interact_size.y);
 
         ui.horizontal(|ui| {
-            if ui.button("Add file(s)").clicked() {
+            if ui.button(get_text(TextKey::AddFiles, self.current_language)).clicked() {
                 if let Some(paths) = rfd::FileDialog::new().pick_files() {
                     for path in paths {
                         self.add_item(path.as_path());
@@ -169,7 +174,7 @@ Append \"_<scalar>\" if tiling",
                 }
             }
 
-            if ui.button("Add folder(s)").clicked() {
+            if ui.button(get_text(TextKey::AddFolders, self.current_language)).clicked() {
                 if let Some(paths) = rfd::FileDialog::new().pick_folders() {
                     for path in paths {
                         self.add_item(path.as_path());
@@ -177,14 +182,14 @@ Append \"_<scalar>\" if tiling",
                 }
             }
 
-            if ui.button("Clear").clicked() {
+            if ui.button(get_text(TextKey::Clear, self.current_language)).clicked() {
                 self.items.clear();
             }
         });
 
         let mut remove_index: Option<usize> = None;
 
-        ui.label(format!("List of items ({}):", self.items.len()));
+        ui.label(format!("{} ({}):", get_text(TextKey::ListOfItems, self.current_language), self.items.len()));
 
         let table = TableBuilder::new(ui)
             .striped(true)

@@ -14,6 +14,7 @@ use crate::{
         utils::preview_file_being_dropped,
         TabProgram,
     },
+    i18n::{Language, TextKey, get_text},
 };
 
 struct DragAndDrop {
@@ -42,6 +43,7 @@ pub struct S2GGui {
     steps: S2GSteps,
     options: S2GOptions,
     is_idle: bool,
+    current_language: Language,
 }
 
 impl S2GGui {
@@ -123,6 +125,7 @@ impl S2GGui {
             steps: S2GSteps::default(),
             options: S2GOptions::default(),
             is_idle: true,
+            current_language: Language::Chinese,
         }
     }
 }
@@ -137,7 +140,7 @@ impl TabProgram for S2GGui {
 
         ui.add_enabled_ui(true, |ui| {
             egui::Grid::new("S2G Layout").num_columns(2).show(ui, |ui| {
-                ui.label("File:");
+                ui.label(get_text(TextKey::File, self.current_language));
                 ui.add_enabled_ui(self.drag_and_drop.use_file, |ui| {
                     ui.add(
                         egui::TextEdit::singleline(&mut self.drag_and_drop.file_path)
@@ -156,7 +159,7 @@ impl TabProgram for S2GGui {
                 }
                 ui.end_row();
 
-                ui.label("Folder:");
+                ui.label(get_text(TextKey::Folder, self.current_language));
                 ui.add_enabled_ui(self.drag_and_drop.use_folder, |ui| {
                     ui.add(
                         egui::TextEdit::singleline(&mut self.drag_and_drop.folder_path)
@@ -179,29 +182,29 @@ impl TabProgram for S2GGui {
         }
 
         ui.separator();
-        ui.label("Steps:");
+        ui.label(get_text(TextKey::Steps, self.current_language));
         ui.horizontal(|ui| {
-            ui.checkbox(&mut self.steps.decompile, "Decompile");
-            ui.checkbox(&mut self.steps.vtf, "VTF")
+            ui.checkbox(&mut self.steps.decompile, get_text(TextKey::Decompile, self.current_language));
+            ui.checkbox(&mut self.steps.vtf, get_text(TextKey::VTF, self.current_language))
                 .on_hover_text("Converts all .vtf files in the folder to .png");
-            ui.checkbox(&mut self.steps.bmp, "BMP")
+            ui.checkbox(&mut self.steps.bmp, get_text(TextKey::BMP, self.current_language))
                 .on_hover_text("Converts all .png in the folder to compliant .bmp");
-            ui.checkbox(&mut self.steps.smd_and_qc, "Smd/Qc")
+            ui.checkbox(&mut self.steps.smd_and_qc, get_text(TextKey::SmdQc, self.current_language))
                 .on_hover_text("Converts decompiled Smd/Qc files");
-            ui.checkbox(&mut self.steps.compile, "GoldSrc Compile")
+            ui.checkbox(&mut self.steps.compile, get_text(TextKey::GoldSrcCompile, self.current_language))
                 .on_hover_text("Must have Smd/Qc step enabled");
         });
 
         ui.separator();
-        ui.label("Options:");
+        ui.label(get_text(TextKey::Options, self.current_language));
         ui.horizontal(|ui| {
-            ui.checkbox(&mut self.options.force, "Force")
+            ui.checkbox(&mut self.options.force, get_text(TextKey::Force, self.current_language))
                 .on_hover_text("Continues with the process even when there is error.");
-            ui.checkbox(&mut self.options.add_suffix, "Add suffix")
+            ui.checkbox(&mut self.options.add_suffix, get_text(TextKey::AddSuffix, self.current_language))
                 .on_hover_text("Adds suffix \"_goldsrc\" to the name of the converted model");
-            ui.checkbox(&mut self.options.ignore_converted, "Ignore converted")
+            ui.checkbox(&mut self.options.ignore_converted, get_text(TextKey::IgnoreConverted, self.current_language))
                 .on_hover_text("Ignores models with \"_goldsrc\" suffix");
-            ui.checkbox(&mut self.options.flatshade, "Flat shade")
+            ui.checkbox(&mut self.options.flatshade, get_text(TextKey::Flatshade, self.current_language))
                 .on_hover_text(
                     "\
 Textures will have flat shade flags \n
@@ -214,18 +217,18 @@ Recommended to have it on so textures will be uniformly lit",
         ui.separator();
         ui.horizontal(|ui| {
             ui.add_enabled_ui(is_done, |ui| {
-                if ui.button("Run").clicked() {
+                if ui.button(get_text(TextKey::Run, self.current_language)).clicked() {
                     self.is_idle = false;
                     let _ = self.run();
                 }
             });
             ui.add_enabled_ui(!is_done, |ui| {
-                if ui.button("Cancel").clicked() {
+                if ui.button(get_text(TextKey::Cancel, self.current_language)).clicked() {
                     self.is_idle = true;
                 }
             });
             if ui
-                .button("Clear")
+                .button(get_text(TextKey::Clear, self.current_language))
                 .on_hover_text("Click to clear output text")
                 .clicked()
             {
@@ -241,9 +244,7 @@ Recommended to have it on so textures will be uniformly lit",
         ScrollArea::vertical().show(ui, |ui| {
             ui.add_sized(
                 egui::vec2(PROGRAM_WIDTH, PROGRAM_HEIGHT / 3.),
-                // Unironically the way to make textbox immutable, LMFAO
                 egui::TextEdit::multiline(&mut readonly_buffer),
-                // egui::TextEdit::multiline(&mut self.output.as_str()),
             );
         });
 
@@ -254,18 +255,16 @@ Recommended to have it on so textures will be uniformly lit",
         ctx.input(|i| {
             if i.raw.dropped_files.len() == 1 {
                 let item = i.raw.dropped_files[0].clone();
-                if let Some(item) = item.path {
-                    if item.is_file() {
-                        self.drag_and_drop.file_path = item.display().to_string();
+                if let Some(path) = item.path {
+                    if path.is_file() {
+                        self.drag_and_drop.file_path = path.display().to_string();
                         self.drag_and_drop.use_file = true;
                         self.drag_and_drop.use_folder = false;
-                    } else if item.is_dir() {
-                        self.drag_and_drop.folder_path = item.display().to_string();
+                    } else if path.is_dir() {
+                        self.drag_and_drop.folder_path = path.display().to_string();
                         self.drag_and_drop.use_folder = true;
                         self.drag_and_drop.use_file = false;
                     }
-                } else {
-                    todo!("Do something about file not being recognizable or just don't")
                 }
             }
         });
