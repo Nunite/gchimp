@@ -105,11 +105,8 @@ impl TabProgram for TexTileGui {
 
         ui.horizontal(|ui| {
             ui.label(get_text(TextKey::ImageExtensions, self.current_language));
-            ui.text_edit_singleline(&mut self.extensions).on_hover_text(
-                "\
-Converts only textures with specified file extension(s)
-Space seperated",
-            );
+            ui.text_edit_singleline(&mut self.extensions)
+                .on_hover_text(get_text(TextKey::FileExtensionsHint, self.current_language));
         });
 
         egui::Grid::new("TexTile option grid")
@@ -120,7 +117,7 @@ Space seperated",
                     self.options.is_tiling,
                     egui::DragValue::new(&mut self.options.tiling_scalar).range(0.0..=100.0),
                 )
-                .on_hover_text("The dimensions of a texture will multiply by this number.");
+                .on_hover_text(get_text(TextKey::TilingHint, self.current_language));
 
                 ui.checkbox(&mut self.options.is_transparent, get_text(TextKey::Transparent, self.current_language));
                 ui.add_enabled(
@@ -129,19 +126,10 @@ Space seperated",
                         .range(0.0..=1.0)
                         .speed(0.01),
                 )
-                .on_hover_text(
-                    "\
-The threshold to decide whether a texture is transparent. \n
-If the dominant color of an image exceeds this threshold, 
-it will be chosen as transparent mask.",
-                );
+                .on_hover_text(get_text(TextKey::TransparentHint, self.current_language));
 
                 ui.checkbox(&mut self.options.change_name, get_text(TextKey::ChangeFileName, self.current_language))
-                    .on_hover_text(
-                        "\
-Prepend \"{\" if transparent
-Append \"_<scalar>\" if tiling",
-                    );
+                    .on_hover_text(get_text(TextKey::ChangeFileNameHint, self.current_language));
             });
 
         ui.separator();
@@ -208,12 +196,12 @@ Append \"_<scalar>\" if tiling",
                         .selectable_label(
                             false,
                             if curr_item.is_dir() {
-                                format!("{} (folder)", display_text)
+                                format!("{} (文件夹)", display_text)
                             } else {
                                 display_text
                             },
                         )
-                        .on_hover_text("Right click to remove");
+                        .on_hover_text(get_text(TextKey::RemoveItemHint, self.current_language));
 
                     if label.clicked_by(egui::PointerButton::Secondary) {
                         remove_index = Some(row_index);

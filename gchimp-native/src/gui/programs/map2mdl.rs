@@ -22,6 +22,7 @@ pub struct Map2MdlGui {
     options: Map2MdlOptions,
     sync: Map2MdlSync,
     current_language: Language,
+    extensions: String,
 }
 
 impl Map2MdlGui {
@@ -34,6 +35,7 @@ impl Map2MdlGui {
             options: Map2MdlOptions::default(),
             sync: Map2MdlSync::default(),
             current_language: Language::Chinese,
+            extensions: Default::default(),
         }
     }
 
@@ -152,11 +154,12 @@ impl TabProgram for Map2MdlGui {
         ui.label(get_text(TextKey::Options, self.current_language));
 
         ui.horizontal(|ui| {
-            ui.checkbox(&mut self.options.auto_pickup_wad, get_text(TextKey::AutoPickupWads, self.current_language)).on_hover_text("Look for WAD files from \"wad\" key in the map file or worldbrush entity");
-            ui.checkbox(&mut self.options.export_texture, get_text(TextKey::ExportTextures, self.current_language)).on_hover_text("Export textures into the map file folder OR studiomdl.exe folder if converting entity");
-            ui.checkbox(&mut self.options.uppercase, get_text(TextKey::UppercaseTexture, self.current_language)).on_hover_text("\
-For .map exported from .jmf/rmf, the texture used inside source map file does not match WAD file.
-This option is to coerce every texture in this process to be upper case.")
+            ui.checkbox(&mut self.options.auto_pickup_wad, get_text(TextKey::AutoPickupWads, self.current_language))
+                .on_hover_text(get_text(TextKey::AutoPickupWadsHint, self.current_language));
+            ui.checkbox(&mut self.options.export_texture, get_text(TextKey::ExportTextures, self.current_language))
+                .on_hover_text(get_text(TextKey::ExportTexturesHint, self.current_language));
+            ui.checkbox(&mut self.options.uppercase, get_text(TextKey::UppercaseTexture, self.current_language))
+                .on_hover_text(get_text(TextKey::UppercaseTextureHint, self.current_language));
         });
 
         ui.horizontal(|ui| {
@@ -164,22 +167,25 @@ This option is to coerce every texture in this process to be upper case.")
                 &mut self.options.marked_entity,
                 get_text(TextKey::OnlyConvertMarked, self.current_language),
             )
-            .on_hover_text(format!(
-                "Only convert brush entities {} and this would modify the original map file",
-                MAP2MDL_ENTITY_NAME
-            ));
+            .on_hover_text(get_text(TextKey::OnlyConvertMarkedHint, self.current_language));
             ui.checkbox(&mut self.options.move_to_origin, get_text(TextKey::CenterModel, self.current_language))
-                .on_hover_text("The center of the model is the origin");
+                .on_hover_text(get_text(TextKey::CenterModelHint, self.current_language));
             ui.checkbox(&mut self.options.flatshade, get_text(TextKey::Flatshade, self.current_language))
-                .on_hover_text("Model is flatshade");
+                .on_hover_text(get_text(TextKey::FlatshadeModelHint, self.current_language));
         });
 
         ui.horizontal(|ui| {
             ui.checkbox(&mut self.options.reverse_normal, get_text(TextKey::ReverseNormal, self.current_language))
-                .on_hover_text("Reverses every vertex normals");
+                .on_hover_text(get_text(TextKey::ReverseNormalHint, self.current_language));
         });
 
         ui.separator();
+
+        // ui.add_enabled_ui(true, |ui| {
+        //     ui.label(get_text(TextKey::ImageExtensions, self.current_language));
+        //     ui.text_edit_singleline(&mut self.extensions)
+        //         .on_hover_text(get_text(TextKey::FileExtensionsHint, self.current_language));
+        // });
 
         if ui.button(get_text(TextKey::Run, self.current_language)).clicked() {
             self.run();

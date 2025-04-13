@@ -186,30 +186,26 @@ impl TabProgram for S2GGui {
         ui.horizontal(|ui| {
             ui.checkbox(&mut self.steps.decompile, get_text(TextKey::Decompile, self.current_language));
             ui.checkbox(&mut self.steps.vtf, get_text(TextKey::VTF, self.current_language))
-                .on_hover_text("Converts all .vtf files in the folder to .png");
+                .on_hover_text(get_text(TextKey::VTFHint, self.current_language));
             ui.checkbox(&mut self.steps.bmp, get_text(TextKey::BMP, self.current_language))
-                .on_hover_text("Converts all .png in the folder to compliant .bmp");
+                .on_hover_text(get_text(TextKey::BMPHint, self.current_language));
             ui.checkbox(&mut self.steps.smd_and_qc, get_text(TextKey::SmdQc, self.current_language))
-                .on_hover_text("Converts decompiled Smd/Qc files");
+                .on_hover_text(get_text(TextKey::SmdQcHint, self.current_language));
             ui.checkbox(&mut self.steps.compile, get_text(TextKey::GoldSrcCompile, self.current_language))
-                .on_hover_text("Must have Smd/Qc step enabled");
+                .on_hover_text(get_text(TextKey::GoldSrcCompileHint, self.current_language));
         });
 
         ui.separator();
         ui.label(get_text(TextKey::Options, self.current_language));
         ui.horizontal(|ui| {
             ui.checkbox(&mut self.options.force, get_text(TextKey::Force, self.current_language))
-                .on_hover_text("Continues with the process even when there is error.");
+                .on_hover_text(get_text(TextKey::ForceHint, self.current_language));
             ui.checkbox(&mut self.options.add_suffix, get_text(TextKey::AddSuffix, self.current_language))
-                .on_hover_text("Adds suffix \"_goldsrc\" to the name of the converted model");
+                .on_hover_text(get_text(TextKey::AddSuffixHint, self.current_language));
             ui.checkbox(&mut self.options.ignore_converted, get_text(TextKey::IgnoreConverted, self.current_language))
-                .on_hover_text("Ignores models with \"_goldsrc\" suffix");
+                .on_hover_text(get_text(TextKey::IgnoreConvertedHint, self.current_language));
             ui.checkbox(&mut self.options.flatshade, get_text(TextKey::Flatshade, self.current_language))
-                .on_hover_text(
-                    "\
-Textures will have flat shade flags \n
-Recommended to have it on so textures will be uniformly lit",
-                )
+                .on_hover_text(get_text(TextKey::FlatshadeHint, self.current_language));
         });
 
         let is_done = *self.s2g_sync.is_done().lock().unwrap();

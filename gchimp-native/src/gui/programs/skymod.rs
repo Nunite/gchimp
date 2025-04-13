@@ -207,34 +207,19 @@ impl TabProgram for SkyModGui {
                 .show(ui, |ui| {
                     ui.label(get_text(TextKey::TexturePerFace, self.current_language));
                     ui.text_edit_singleline(&mut self.texture_per_face)
-                        .on_hover_text(
-                            "\
-How many textures should each skybox face have? \n
-It should be a perfect square (such as 1, 4, 9, 16, ..) \n
-If a model has more than 64 textures, it will be split into smaller models",
-                        );
+                        .on_hover_text(get_text(TextKey::TexturePerFaceHint, self.current_language));
                     ui.label(get_text(TextKey::SkyboxSize, self.current_language));
                     ui.text_edit_singleline(&mut self.skybox_size)
-                        .on_hover_text("The size of the model");
+                        .on_hover_text(get_text(TextKey::SkyboxSizeHint, self.current_language));
                 });
         });
 
         ui.horizontal(|ui| {
             ui.checkbox(&mut self.options.convert_texture, get_text(TextKey::ConvertTexture, self.current_language))
-                .on_hover_text(
-                    "\
-Converts most image format into compliant BMP. \n
-Processes textures into suitable format for other settings. \n
-Recommended to leave it checked.
-",
-                );
+                .on_hover_text(get_text(TextKey::ConvertTextureHint, self.current_language));
 
             ui.checkbox(&mut self.options.flatshade, get_text(TextKey::Flatshade, self.current_language))
-                .on_hover_text(
-                    "\
-Mark texture with flatshade flag. \n
-Recommeded to leave it checked for uniformly lit texture.",
-                );
+                .on_hover_text(get_text(TextKey::FlatshadeHint, self.current_language));
 
             ui.label(get_text(TextKey::OutputName, self.current_language));
             ui.text_edit_singleline(&mut self.options.output_name)

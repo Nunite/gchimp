@@ -147,17 +147,13 @@ impl TabProgram for BLBHGui {
 
         ui.horizontal(|ui| {
             ui.checkbox(&mut self.options.convert_texture, get_text(TextKey::ConvertTexture, self.current_language))
-                .on_hover_text("Splits 4096x4096 texture into 64 smaller compliant files");
+                .on_hover_text(get_text(TextKey::ConvertTextureHint, self.current_language));
             ui.checkbox(&mut self.options.convert_smd, get_text(TextKey::ConvertSMD, self.current_language))
-                .on_hover_text(
-                    "Creates new SMD file that will use those new texture files accordingly",
-                );
+                .on_hover_text(get_text(TextKey::ConvertSMDHint, self.current_language));
             ui.checkbox(&mut self.options.compile_model, get_text(TextKey::CompileMDL, self.current_language))
-                .on_hover_text(
-                    "Creates QC file and compiles the model with included studiomdl.exe",
-                );
+                .on_hover_text(get_text(TextKey::CompileMDLHint, self.current_language));
             ui.checkbox(&mut self.options.flat_shade, get_text(TextKey::Flatshade, self.current_language))
-                .on_hover_text("Flags every texture with flat shade");
+                .on_hover_text(get_text(TextKey::FlatshadeHint, self.current_language));
         });
 
         ui.horizontal(|ui| {
@@ -165,12 +161,7 @@ impl TabProgram for BLBHGui {
             // only check value if lost focus
             let text_editor = egui::TextEdit::singleline(&mut self.clamp_value).desired_width(80.);
 
-            let text_editor_ui = ui.add(text_editor).on_hover_text(
-                "\
-There is a problem with the edge where it is repeatedly filtered.
-With this option, the polygon UV will not sample the edge by avoiding the edge.
-By default, it will \"shrink\" the UV in by 1 pixel wherever applicable.",
-            );
+            let text_editor_ui = ui.add(text_editor).on_hover_text(get_text(TextKey::UVClampHint, self.current_language));
 
             if text_editor_ui.has_focus() {
                 self.check_clamp_value = true;

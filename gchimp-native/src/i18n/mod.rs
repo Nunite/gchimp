@@ -78,6 +78,44 @@ pub enum TextKey {
     AddFiles,
     AddFolders,
     ListOfItems,
+    // Status messages
+    Idle,
+    Running,
+    Done,
+    OK,
+    // Hover texts
+    UVClampHint,
+    TexturePerFaceHint,
+    SkyboxSizeHint,
+    ConvertTextureHint,
+    FlatshadeHint,
+    FileExtensionsHint,
+    TilingHint,
+    TransparentHint,
+    ChangeFileNameHint,
+    RemoveItemHint,
+    AutoPickupWadsHint,
+    ExportTexturesHint,
+    UppercaseTextureHint,
+    OnlyConvertMarkedHint,
+    CenterModelHint,
+    FlatshadeModelHint,
+    ReverseNormalHint,
+    ConvertTextureBlbhHint,
+    ConvertSmdHint,
+    CompileMdlHint,
+    ForceHint,
+    AddSuffixHint,
+    IgnoreConvertedHint,
+    FlatshadeTextureHint,
+    // 新增的提示文本键
+    VTFHint,
+    BMPHint,
+    SmdQcHint,
+    GoldSrcCompileHint,
+    // BLBH 相关的提示文本键
+    ConvertSMDHint,
+    CompileMDLHint,
 }
 
 lazy_static! {
@@ -147,6 +185,42 @@ lazy_static! {
         en.insert(TextKey::AddFiles, "Add file(s)");
         en.insert(TextKey::AddFolders, "Add folder(s)");
         en.insert(TextKey::ListOfItems, "List of items");
+        // Status messages
+        en.insert(TextKey::Idle, "Idle");
+        en.insert(TextKey::Running, "Running");
+        en.insert(TextKey::Done, "Done");
+        en.insert(TextKey::OK, "OK");
+        // Hover texts
+        en.insert(TextKey::UVClampHint, "There is a problem with the edge where it is repeatedly filtered.\nWith this option, the polygon UV will not sample the edge by avoiding the edge.\nBy default, it will \"shrink\" the UV in by 1 pixel wherever applicable.");
+        en.insert(TextKey::TexturePerFaceHint, "How many textures should each skybox face have?\nIt should be a perfect square (such as 1, 4, 9, 16, ..)\nIf a model has more than 64 textures, it will be split into smaller models");
+        en.insert(TextKey::SkyboxSizeHint, "The size of the model");
+        en.insert(TextKey::ConvertTextureHint, "Converts most image format into compliant BMP.\nProcesses textures into suitable format for other settings.\nRecommended to leave it checked.");
+        en.insert(TextKey::FlatshadeHint, "Mark texture with flatshade flag.\nRecommeded to leave it checked for uniformly lit texture.");
+        en.insert(TextKey::FileExtensionsHint, "Converts only textures with specified file extension(s)\nSpace seperated");
+        en.insert(TextKey::TilingHint, "The dimensions of a texture will multiply by this number.");
+        en.insert(TextKey::TransparentHint, "The threshold to decide whether a texture is transparent.\nIf the dominant color of an image exceeds this threshold,\nit will be chosen as transparent mask.");
+        en.insert(TextKey::ChangeFileNameHint, "Prepend \"{\" if transparent\nAppend \"_<scalar>\" if tiling");
+        en.insert(TextKey::RemoveItemHint, "Right click to remove");
+        en.insert(TextKey::AutoPickupWadsHint, "Look for WAD files from \"wad\" key in the map file or worldbrush entity");
+        en.insert(TextKey::ExportTexturesHint, "Export textures into the map file folder OR studiomdl.exe folder if converting entity");
+        en.insert(TextKey::UppercaseTextureHint, "For .map exported from .jmf/rmf, the texture used inside source map file does not match WAD file.\nThis option is to coerce every texture in this process to be upper case.");
+        en.insert(TextKey::OnlyConvertMarkedHint, "Only convert brush entities {} and this would modify the original map file");
+        en.insert(TextKey::CenterModelHint, "The center of the model is the origin");
+        en.insert(TextKey::FlatshadeModelHint, "Model is flatshade");
+        en.insert(TextKey::ReverseNormalHint, "Reverses every vertex normals");
+        en.insert(TextKey::ConvertTextureBlbhHint, "Splits 4096x4096 texture into 64 smaller compliant files");
+        en.insert(TextKey::ConvertSmdHint, "Creates new SMD file that will use those new texture files accordingly");
+        en.insert(TextKey::CompileMdlHint, "Creates QC file and compiles the model with included studiomdl.exe");
+        en.insert(TextKey::ForceHint, "Continues with the process even when there is error.");
+        en.insert(TextKey::AddSuffixHint, "Adds suffix \"_goldsrc\" to the name of the converted model");
+        en.insert(TextKey::IgnoreConvertedHint, "Ignores models with \"_goldsrc\" suffix");
+        en.insert(TextKey::FlatshadeTextureHint, "Textures will have flat shade flags\nRecommended to have it on so textures will be uniformly lit");
+        en.insert(TextKey::VTFHint, "Convert textures to VTF format");
+        en.insert(TextKey::BMPHint, "Convert textures to BMP format");
+        en.insert(TextKey::SmdQcHint, "Generate SMD and QC files");
+        en.insert(TextKey::GoldSrcCompileHint, "Compile model for GoldSrc engine");
+        en.insert(TextKey::ConvertSMDHint, "Creates new SMD file that will use those new texture files accordingly");
+        en.insert(TextKey::CompileMDLHint, "Creates QC file and compiles the model with included studiomdl.exe");
         m.insert(Language::English, en);
 
         // Chinese translations
@@ -212,6 +286,42 @@ lazy_static! {
         zh.insert(TextKey::AddFiles, "添加文件");
         zh.insert(TextKey::AddFolders, "添加文件夹");
         zh.insert(TextKey::ListOfItems, "项目列表");
+        // Status messages
+        zh.insert(TextKey::Idle, "空闲");
+        zh.insert(TextKey::Running, "运行中");
+        zh.insert(TextKey::Done, "完成");
+        zh.insert(TextKey::OK, "成功");
+        // Hover texts
+        zh.insert(TextKey::UVClampHint, "边缘处存在重复过滤的问题。\n启用此选项后，多边形UV将通过避开边缘来避免采样边缘。\n默认情况下，它会在适用的地方将UV向内收缩1个像素。");
+        zh.insert(TextKey::TexturePerFaceHint, "每个天空盒面应该有多少纹理？\n应该是一个完全平方数(如1、4、9、16等)\n如果模型有超过64个纹理，它将被分割成更小的模型");
+        zh.insert(TextKey::SkyboxSizeHint, "模型的大小");
+        zh.insert(TextKey::ConvertTextureHint, "将大多数图像格式转换为兼容的BMP格式。\n根据其他设置处理纹理为合适的格式。\n建议保持选中状态。");
+        zh.insert(TextKey::FlatshadeHint, "为纹理标记平面着色标志。\n建议保持选中状态以获得均匀的光照纹理。");
+        zh.insert(TextKey::FileExtensionsHint, "仅转换指定文件扩展名的纹理\n用空格分隔");
+        zh.insert(TextKey::TilingHint, "纹理的尺寸将乘以这个数字。");
+        zh.insert(TextKey::TransparentHint, "决定纹理是否透明的阈值。\n如果图像的主要颜色超过此阈值，\n它将被选为透明遮罩。");
+        zh.insert(TextKey::ChangeFileNameHint, "如果透明则在前面添加 \"{\"\n如果平铺则在后面添加 \"_<倍数>\"");
+        zh.insert(TextKey::RemoveItemHint, "右键点击删除");
+        zh.insert(TextKey::AutoPickupWadsHint, "从地图文件或世界画笔实体的\"wad\"键中查找WAD文件");
+        zh.insert(TextKey::ExportTexturesHint, "将纹理导出到地图文件夹或转换实体时导出到studiomdl.exe文件夹");
+        zh.insert(TextKey::UppercaseTextureHint, "对于从.jmf/rmf导出的.map文件，源地图文件中使用的纹理与WAD文件不匹配。\n此选项将在此过程中强制所有纹理为大写。");
+        zh.insert(TextKey::OnlyConvertMarkedHint, "仅转换标记的画笔实体{}，这将修改原始地图文件");
+        zh.insert(TextKey::CenterModelHint, "模型的中心在原点");
+        zh.insert(TextKey::FlatshadeModelHint, "模型使用平面着色");
+        zh.insert(TextKey::ReverseNormalHint, "反转所有顶点法线");
+        zh.insert(TextKey::ConvertTextureBlbhHint, "将4096x4096纹理分割成64个较小的兼容文件");
+        zh.insert(TextKey::ConvertSmdHint, "创建新的SMD文件，使用相应的新纹理文件");
+        zh.insert(TextKey::CompileMdlHint, "创建QC文件并使用包含的studiomdl.exe编译模型");
+        zh.insert(TextKey::ForceHint, "即使出现错误也继续处理。");
+        zh.insert(TextKey::AddSuffixHint, "为转换后的模型名称添加\"_goldsrc\"后缀");
+        zh.insert(TextKey::IgnoreConvertedHint, "忽略带有\"_goldsrc\"后缀的模型");
+        zh.insert(TextKey::FlatshadeTextureHint, "纹理将具有平面着色标志\n建议开启以使纹理均匀照明");
+        zh.insert(TextKey::VTFHint, "将纹理转换为VTF格式");
+        zh.insert(TextKey::BMPHint, "将纹理转换为BMP格式");
+        zh.insert(TextKey::SmdQcHint, "生成SMD和QC文件");
+        zh.insert(TextKey::GoldSrcCompileHint, "为GoldSrc引擎编译模型");
+        zh.insert(TextKey::ConvertSMDHint, "创建新的SMD文件，使用相应的新纹理文件");
+        zh.insert(TextKey::CompileMDLHint, "创建QC文件并使用包含的studiomdl.exe编译模型");
         m.insert(Language::Chinese, zh);
 
         m
